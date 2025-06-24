@@ -36,6 +36,7 @@
           <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
           <p><strong>Time:</strong> {{ selectedAppointment.time }}</p>
           <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
+          <input type="button" value="Cancel Appointment" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer" @click="selectAppointment(null)" />
         </div>
         <div v-else>
           <p>Please select an appointment to see the details.</p>
