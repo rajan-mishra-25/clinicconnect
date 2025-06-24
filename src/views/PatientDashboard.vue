@@ -1,18 +1,36 @@
-
- <template>
-  <div class="patient-dashboard">
-    <div class="grid-container">
-      <div class="appointments-list" style="flex: 0 0 40%;">
-        <h2>Appointments</h2>
-        <ul>
-          <li v-for="appointment in appointments" :key="appointment.id" @click="selectAppointment(appointment)">
-            {{ appointment.date }} - {{ appointment.doctorName }}
-          </li>
-        </ul>
+<template>
+  <div class="flex h-screen p-4 space-x-4 bg-gray-100">
+    <!-- Left Section (40%) -->
+    <div class="w-2/5 bg-white rounded-2xl shadow overflow-hidden">
+      <div class="bg-blue-600 text-white text-lg font-semibold px-4 py-3">
+        Appointments
       </div>
-      <div class="appointment-details" style="flex: 0 0 60%;">
-        <h2>Appointment Details</h2>
-        <div v-if="selectedAppointment">
+      <div class="p-4 grid grid-cols-1 gap-4">
+        <div
+          v-for="appointment in appointments"
+          :key="'left-' + appointment.id"
+          class="bg-blue-100 rounded-xl p-4 text-center shadow"
+        >
+          <ul>
+          <div>
+            <li  :key="appointment.id" @click="selectAppointment(appointment)" >{{ appointment.date }} - {{ appointment.doctorName }}</li>
+          </div>
+        </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Section (60%) -->
+    <div class="w-3/5 bg-white rounded-2xl shadow overflow-hidden">
+      <div class="bg-green-600 text-white text-lg font-semibold px-4 py-3">
+        Appointment Details
+      </div>
+      <div class="p-4 grid grid-cols-1 gap-4">
+        <div
+          :key="'right-' + n"
+          class="bg-green-100 rounded-xl p-4 text-left shadow"
+        >
+           <div v-if="selectedAppointment">
           <p><strong>Doctor Name:</strong> {{ selectedAppointment.doctorName }}</p>
           <p><strong>Speciality:</strong> {{ selectedAppointment.speciality }}</p>
           <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
@@ -21,6 +39,7 @@
         </div>
         <div v-else>
           <p>Please select an appointment to see the details.</p>
+        </div>
         </div>
       </div>
     </div>
