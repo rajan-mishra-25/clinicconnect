@@ -1,16 +1,13 @@
 
  <template>
   <div class="patient-dashboard">
-    <div class="grid-container max-w-sm mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="grid-container">
       <div class="appointments-list" style="flex: 0 0 40%;">
-         <div class="bg-green-500 text-white text-lg font-bold p-4 rounded-tl-lg rounded-tr-lg">
-      Appointments
-    </div>
+        <h2>Appointments</h2>
         <ul>
           <li v-for="appointment in appointments" :key="appointment.id" @click="selectAppointment(appointment)">
             {{ appointment.date }} - {{ appointment.doctorName }}
           </li>
-
         </ul>
       </div>
       <div class="appointment-details" style="flex: 0 0 60%;">
