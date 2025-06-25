@@ -5,16 +5,31 @@ import DoctorDashboard from '../views/DoctorDashboard.vue';
 import PatientDashboard from '../views/PatientDashboard.vue';
 import BookAppointment from '../views/BookAppointment.vue';
 
+const isAuthenticated = () => {
+  return !!localStorage.getItem('authToken'); // or 'user'
+};
+
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: Login },
   { path: '/register', component: Register },
-  { path: '/doctor-dashboard', component: DoctorDashboard },
-  { path: '/patient-dashboard', component: PatientDashboard },
-  { path: '/book-appointment', component: BookAppointment },
+  { path: '/doctor-dashboard', component: DoctorDashboard, meta: { requiresAuth: true } },
+  { path: '/patient-dashboard', component: PatientDashboard, meta: { requiresAuth: true } },
+  { path: '/book-appointment', component: BookAppointment, meta: { requiresAuth: true } },
 ];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes
 });
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isAuthenticated()) {
+    //next('/login');
+    next();
+  } else {
+    next(); // allow to proceed
+  }
+});
+
+export default router;

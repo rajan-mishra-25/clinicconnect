@@ -22,13 +22,13 @@ export default {
       return Object.keys(this.errors).length === 0;
     },
     async handleLogin() {
-      debugger;
       if (this.validateInput()) {
         try {
           const response = await loginUser({ username: this.username, password: this.password });
           // Handle successful login (e.g., redirect or store token)
           if(response.status === 200) {
             this.$router.push('/patient-dashboard'); // Redirect to dashboard on successful login
+            // localStorage.setItem('authToken', response.data.token);
           }
           console.log('Login successful:', response);
         } catch (error) {
