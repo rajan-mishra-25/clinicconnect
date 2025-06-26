@@ -38,7 +38,7 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { registerUser } from '@/store/api.js';
 
 const router = useRouter();
 const loading = ref(false);
@@ -47,13 +47,13 @@ const form = reactive({
   fullName: '',
   email: '',
   password: '',
-  role: 'patient' // Default role, can be changed based on your requirements
+  role: 'P' // Default role, can be changed based on your requirements
 });
 
 const handleRegister = async () => {
   try {
     loading.value = true;
-    await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, form); // Replace with your actual endpoint
+    await registerUser(form); // Replace with your actual endpoint
     router.push('/login');
   } catch (error) {
     alert('Registration failed. Please check your inputs.');

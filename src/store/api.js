@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'https://your-api-url.com/api', // Replace with your API base URL
+  baseURL: `${import.meta.env.VITE_API_URL}/api`, // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
   },
@@ -26,10 +26,15 @@ export default {
 };
 
 export const loginUser = async (credentials) => {
-  const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, credentials);
+  const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/user/login`, credentials);
+  return response.data;
+};
+
+export const registerUser = async (credentials) => {
+  const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/user/register`, credentials);
   return response.data;
 };
 
 export const fetchAppointments = () => {
-  return axios.get(`${import.meta.env.VITE_API_URL}/api/appointments`); // Adjust the endpoint as necessary
+  return axios.get(`${import.meta.env.VITE_API_URL}/user/getappointments`); // Adjust the endpoint as necessary
 };

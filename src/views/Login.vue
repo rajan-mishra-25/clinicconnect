@@ -5,7 +5,7 @@
 export default {
   data() {
     return {
-      username: '',
+      email: '',
       password: '',
       errors: {}
     };
@@ -13,8 +13,8 @@ export default {
   methods: {
     validateInput() {
       this.errors = {};
-      if (!this.username) {
-        this.errors.username = 'Username is required.';
+      if (!this.email) {
+        this.errors.email = 'Username is required.';
       }
       if (!this.password) {
         this.errors.password = 'Password is required.';
@@ -24,11 +24,11 @@ export default {
     async handleLogin() {
       if (this.validateInput()) {
         try {
-          const response = await loginUser({ username: this.username, password: this.password });
+          const response = await loginUser({ email: this.email, password: this.password });
           // Handle successful login (e.g., redirect or store token)
-          if(response.status === 200) {
+          if(response) {
             this.$router.push('/patient-dashboard'); // Redirect to dashboard on successful login
-            // localStorage.setItem('authToken', response.data.token);
+             localStorage.setItem('authToken', response.token);
           }
           console.log('Login successful:', response);
         } catch (error) {
@@ -43,12 +43,12 @@ export default {
 
 <template>
      <div class="flex items-center justify-center min-h-screen bg-gray-100">
-       <form class="bg-white p-6 rounded shadow-md w-96">
+       <form @submit.prevent="handleLogin" class="bg-white p-6 rounded shadow-md w-96">
          <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
          <div class="mb-4">
-           <label for="username" class="block text-sm font-medium text-gray-700">Email</label>
-           <input type="text" id="email" v-model="username" class="mt-1 block w-full p-2 border border-gray-300 rounded" required />
-        <span v-if="errors.username">{{ errors.username }}</span>
+           <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+           <input type="text" id="email" v-model="email" class="mt-1 block w-full p-2 border border-gray-300 rounded" required />
+        <span v-if="errors.email">{{ errors.email }}</span>
          </div>
          <div class="mb-4">
            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
