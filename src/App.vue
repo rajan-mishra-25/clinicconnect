@@ -1,32 +1,62 @@
 
 <template>
-  <div id="app">
-    <header>
-      <div class="logo">
-        <!-- Space for logo -->
-        <img src="./assets/logo.png" alt="Logo" />
-      </div>
+  <div id="app" class="font-sans text-gray-800">
+    <header class="bg-blue-600 shadow-lg">
+      <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+       <div class="flex items-center space-x-2">
+          <img src="./assets/logo.png" alt="Logo" class="h-12 w-auto" />
+          <span class="text-xl font-semibold ">ClinicConnect</span>
+        </div>
       <nav>
-        <ul>
-          <li><router-link to="/">Login</router-link></li>
-          <li><router-link to="/register">Register</router-link></li>
-          <li><router-link to="/doctor-dashboard">Doctor Dashboard</router-link></li>
-          <li><router-link to="/patient-dashboard">Patient Dashboard</router-link></li>
-          <li><router-link to="/book-appointment">Book Appointment</router-link></li>
+        <ul class="flex items-center space-x-6">
+          <li v-if="!isUserLoggedIn"><router-link to="/">Login</router-link></li>
+          <li v-if="!isUserLoggedIn"><router-link to="/register">Register</router-link></li>
+          <li v-if="isUserLoggedIn && userRole==='Doctor'"><router-link to="/doctor-dashboard">Doctor Dashboard</router-link></li>
+          <li v-if="isUserLoggedIn && userRole==='Patient'"><router-link to="/patient-dashboard">Patient Dashboard</router-link></li>
+          <li v-if="isUserLoggedIn && userRole==='Patient'"><router-link to="/book-appointment">Book Appointment</router-link></li>
           <!-- Add more links as needed based on your views -->
         </ul>
       </nav>
+      <button
+      v-if="isUserLoggedIn"
+          @click="handleLogout"
+          class="ml-6 bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg"
+        >
+          Logout
+        </button>
+        </div>
     </header>
-    <main>
+    <main class="p-4">
       <router-view />
     </main>
   </div>
 </template>
+<script setup>
+import { provide, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
-<script>
-export default {
-  name: 'App',
-};
+const router = useRouter();
+
+// Create the reactive state
+const isUserLoggedIn = ref(!!localStorage.getItem('authToken'));
+const userRole = ref(localStorage.getItem('userRole') || '');
+
+// Provide this globally (once)
+provide('isUserLoggedIn', isUserLoggedIn);
+provide('userRole', userRole);
+
+// Watch changes to localStorage token (simulated by watching the ref itself)
+watch([isUserLoggedIn, userRole], ([newLogin, newRole]) => {
+  console.log('isUserLoggedIn changed to:', newLogin);
+});
+ 
+function handleLogout() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('userRole');
+  isUserLoggedIn.value = false;
+  userRole.value = '';
+  router.push('/');
+}
 </script>
 
 <style>

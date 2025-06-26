@@ -1,6 +1,7 @@
 
 <script>
   import { loginUser } from '@/store/api.js';
+import { provide } from 'vue';
 
 export default {
   data() {
@@ -21,14 +22,18 @@ export default {
       }
       return Object.keys(this.errors).length === 0;
     },
-    async handleLogin() {
+    async handleLogin() {  
       if (this.validateInput()) {
         try {
           const response = await loginUser({ email: this.email, password: this.password });
           // Handle successful login (e.g., redirect or store token)
           if(response) {
-            this.$router.push('/patient-dashboard'); // Redirect to dashboard on successful login
-             localStorage.setItem('authToken', response.token);
+            localStorage.setItem('authToken', response.token);
+            localStorage.setItem('userRole', response.role);
+            if(response.role==="Patient")
+              this.$router.push('/patient-dashboard').then(() => window.location.reload()); // Redirect to dashboard on successful login
+            else
+              this.$router.push('/doctor-dashboard').then(() => window.location.reload());
           }
           console.log('Login successful:', response);
         } catch (error) {
