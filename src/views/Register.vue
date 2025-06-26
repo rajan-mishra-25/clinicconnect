@@ -1,66 +1,65 @@
 
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-96">
-      <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
-      <form @submit.prevent="handleSubmit">
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700" for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            v-model="username"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-            required
-          />
+  <div class="min-h-screen flex items-center justify-center bg-gray-100">
+    <div class="w-full max-w-md bg-white p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Create Account</h2>
+
+      <form @submit.prevent="handleRegister" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Full Name</label>
+          <input v-model="form.fullName" type="text" required class="mt-1 w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700" for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-            required
-          />
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input v-model="form.email" type="email" required class="mt-1 w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700" for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            class="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
-            required
-          />
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Password</label>
+          <input v-model="form.password" type="password" required class="mt-1 w-full border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
-        <button
-          type="submit"
-          class="w-full bg-blue-500 text-white font-bold py-2 rounded hover:bg-blue-600 transition duration-200"
-        >
-          Register
-        </button>
+
+        <div>
+          <button type="submit" :disabled="loading" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-xl">
+            {{ loading ? 'Registering...' : 'Register' }}
+          </button>
+        </div>
+
+        <p class="text-center text-sm text-gray-600">
+          Already have an account?
+          <router-link to="/login" class="text-blue-600 hover:underline">Login here</router-link>
+        </p>
       </form>
-      <p class="mt-4 text-center text-sm text-gray-600">
-        Already have an account? <router-link to="/login" class="text-blue-500">Login</router-link>
-      </p>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: ''
-    };
-  },
-  methods: {
-    handleSubmit() {
-      // Handle registration logic here
-    }
+<script setup>
+import { reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+const router = useRouter();
+const loading = ref(false);
+
+const form = reactive({
+  fullName: '',
+  email: '',
+  password: '',
+  role: 'patient' // Default role, can be changed based on your requirements
+});
+
+const handleRegister = async () => {
+  try {
+    loading.value = true;
+    await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, form); // Replace with your actual endpoint
+    router.push('/login');
+  } catch (error) {
+    alert('Registration failed. Please check your inputs.');
+    console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 </script>

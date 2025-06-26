@@ -61,9 +61,20 @@ export default {
     };
   },
   methods: {
+     async getAppointments() {
+      try {
+        const response = await fetchAppointments();
+        this.appointments = response.data; // Assuming the response structure
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    },
     selectAppointment(appointment) {
       this.selectedAppointment = appointment;
-    },
+    }
+  },
+  mounted() {
+    this.getAppointments();
   },
 };
 </script>

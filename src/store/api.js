@@ -26,6 +26,10 @@ export default {
 };
 
 export const loginUser = async (credentials) => {
-  const response = await axios.post('/api/login', credentials);
+  const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, credentials);
   return response.data;
+};
+
+export const fetchAppointments = () => {
+  return axios.get(`${import.meta.env.VITE_API_URL}/api/appointments`); // Adjust the endpoint as necessary
 };
