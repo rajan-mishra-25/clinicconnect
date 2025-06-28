@@ -27,14 +27,14 @@
       </div>
       <div class="p-4 grid grid-cols-1 gap-4">
         <div
-          :key="'right-' + n"
+          :key="'right-'"
           class="bg-green-100 rounded-xl p-4 text-left shadow"
         >
            <div v-if="selectedAppointment">
           <p><strong>Doctor Name:</strong> {{ selectedAppointment.doctorName }}</p>
-          <p><strong>Speciality:</strong> {{ selectedAppointment.speciality }}</p>
-          <p><strong>Date:</strong> {{ selectedAppointment.date }}</p>
-          <p><strong>Time:</strong> {{ selectedAppointment.time }}</p>
+          <p><strong>Status:</strong> {{ selectedAppointment.appointmentStatus }}</p>
+          <p><strong>Date:</strong> {{  selectedAppointment.date }}</p>
+          <p><strong>Time:</strong> {{ selectedAppointment.startTime }} - {{ selectedAppointment.endTime }} </p>
           <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
           <input type="button" value="Cancel Appointment" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer" @click="selectAppointment(null)" />
         </div>
@@ -48,15 +48,12 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
+import {fetchAppointments} from '@/store/api.js'
 export default {
   data() {
     return {
-      appointments: [
-        // Sample data structure
-        { id: 1, doctorName: 'Dr. Smith', speciality: 'Cardiology', date: '2023-10-01', time: '10:00 AM', description: 'Routine check-up' },
-        { id: 2, doctorName: 'Dr. Jones', speciality: 'Dermatology', date: '2023-10-02', time: '11:00 AM', description: 'Skin rash evaluation' },
-        // Add more appointments as needed
-      ],
+      appointments: [],
       selectedAppointment: null,
     };
   },
@@ -64,7 +61,7 @@ export default {
      async getAppointments() {
       try {
         const response = await fetchAppointments();
-        this.appointments = response.data; // Assuming the response structure
+        this.appointments = response; // Assuming the response structure
       } catch (error) {
         console.error('Error fetching appointments:', error);
       }

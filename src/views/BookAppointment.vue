@@ -4,12 +4,17 @@
     <h2 class="text-2xl font-bold mb-4">Book an Appointment</h2>
     <form @submit.prevent="submitAppointment">
       <div class="mb-4">
-        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-        <input type="text" id="name" v-model="name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500" required />
-      </div>
+        <label for="email" class="block text-sm font-medium text-gray-700">Doctor Name</label>
+       <select id="doctor-select" v-model="selectedDoctor" class="w-full border rounded p-2">
+         <option disabled value="">Select a doctor</option>
+          <option v-for="doctor in doctors" :key="doctor.doctorId" :value="doctor.doctorId">
+            {{ doctor.name }}
+          </option>
+      </select>
+       </div>
       <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-        <input type="email" id="email" v-model="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500" required />
+        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+        <input type="description" id="description" v-model="description" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500" required />
       </div>
       <div class="mb-4">
         <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
@@ -25,22 +30,69 @@
 </template>
 
 <script>
+ import {jwtDecode} from 'jwt-decode';
+import {getDoctorList} from '@/store/api.js';
+
+//  const token = localStorage.getItem("authToken");
+//  const decodedToken = jwtDecode(token);
+
+
 export default {
   data() {
+    
     return {
-      doctor: '',
+      selectedDoctor: null,
+      description: '',
       date: '',
-      timeslot: '',
+      time: '',
       doctors: [],
       timeslots: ['10:00 AM', '11:00 AM', '2:00 PM', '4:00 PM']
     };
   },
   mounted() {
     // fetch available doctors
+    this.fetchDoctors();
   },
   methods: {
-    book() {
+    async fetchDoctors(){
+     try {
+        const response = await getDoctorList();
+
+        // Check if response is wrapped inside a `data` key
+        this.doctors = Array.isArray(response) ? response : response.data;
+
+        if (!this.doctors || this.doctors.length === 0) {
+          console.warn('Doctors list is empty');
+        }
+      } catch (error) {
+        console.error('Failed to load doctors:', error);
+      }
+    },
+    async submitAppointment() {
+       try {
       // book appointment and trigger email
+      const token = localStorage.getItem('authToken');
+      const decoded = jwtDecode(token);
+      const patientId = decoded?.id || decoded?.userId;
+
+      debugger;
+      const payload = {
+        doctorId: this.selectedDoctor,
+        patientId: patientId,
+        description: this.description,
+        date: this.date,
+        time: this.time
+      };
+    console.log('Submitting appointment:', payload);
+
+    // Now send the payload to your backend API (e.g., using axios)
+    // await axios.post('/api/appointments/book', payload);
+
+    alert('Appointment booked!');
+  } catch (error) {
+    console.error('Failed to book appointment:', error);
+    alert('Failed to book appointment.');
+  }
     }
   }
 };
