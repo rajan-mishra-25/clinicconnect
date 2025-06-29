@@ -8,7 +8,7 @@
       <div class="p-4 flex-1 overflow-y-auto">
         <ul class="flex flex-col gap-4">
           <li v-for="patient in patients" :key="patient.id" class="bg-blue-100 rounded-xl p-4 text-center shadow cursor-pointer hover:bg-blue-200 transition-colors" @click="showPatientDetails(patient)">
-            {{ patient.name }} <span class='text-xs text-gray-500'>(Age: {{ patient.age }})</span>
+            {{ patient.name }}
           </li>
         </ul>
       </div>
@@ -26,14 +26,6 @@
               <li v-if="selectedItem.name" class="px-2 py-1 flex items-center">
                 <span class="font-semibold text-gray-700 min-w-[80px] text-right mr-2">Name:</span>
                 <span class="text-gray-900 text-lg text-left">{{ selectedItem.name }}</span>
-              </li>
-              <li v-if="selectedItem.age" class="px-2 py-1 flex items-center">
-                <span class="font-semibold text-gray-700 min-w-[80px] text-right mr-2">Age:</span>
-                <span class="text-gray-900 text-left">{{ selectedItem.age }} years</span>
-              </li>
-              <li v-if="selectedItem.contact" class="px-2 py-1 flex items-center">
-                <span class="font-semibold text-gray-700 min-w-[80px] text-right mr-2">Contact:</span>
-                <span class="text-gray-900 text-left">{{ selectedItem.contact }}</span>
               </li>
               <li v-if="selectedItem.notes" class="px-2 py-1 flex items-center">
                 <span class="font-semibold text-gray-700 min-w-[80px] text-right mr-2">Notes:</span>
@@ -77,7 +69,7 @@
       <div class="p-4 flex-1 overflow-y-auto">
         <ul class="flex flex-col gap-4">
           <li v-for="appointment in appointments" :key="appointment.id" class="bg-green-100 rounded-xl p-4 text-center shadow cursor-pointer hover:bg-green-200 transition-colors" @click="showAppointmentDetails(appointment)">
-            {{ appointment.time }} - {{ appointment.name }} <span class='text-xs text-gray-500'>({{ appointment.reason }})</span>
+            {{ appointment.time }} - {{ appointment.name }} 
           </li>
         </ul>
       </div>
@@ -99,14 +91,17 @@ export default {
   mounted() {
     // Dummy data for demo
     const dummyPatients = [
-      { id: 1, name: 'John Doe', age: 45, contact: '+1-234-567-8901', notes: 'Regular checkup patient with history of hypertension' },
-      { id: 2, name: 'Jane Smith', age: 32, contact: '+1-234-567-8902', notes: 'New patient, first visit scheduled' },
-      { id: 3, name: 'Mike Johnson', age: 28, contact: '+1-234-567-8903', notes: 'Follow-up appointment for ankle injury' },
+      { id: 1, name: 'Marcus Stoinis', age: 45, contact: '+1-234-567-8901', notes: 'Regular checkup patient with history of hypertension' },
+      { id: 2, name: 'Glenn Gilespi', age: 32, contact: '+1-234-567-8902', notes: 'New patient, first visit scheduled' },
+      { id: 3, name: 'William Defoe', age: 28, contact: '+1-234-567-8903', notes: 'Follow-up appointment for ankle injury' },
+      { id: 4, name: 'Sirius Black', age: 28, contact: '+1-234-567-8903', notes: 'This the test note' },
     ];
     const dummyAppointments = [
-      { id: 1, patientId: 1, name: 'John Doe', time: '9:00 AM', reason: 'Regular Checkup', notes: 'Blood pressure monitoring required' },
-      { id: 2, patientId: 2, name: 'Jane Smith', time: '11:30 AM', reason: 'First Consultation', notes: 'New patient intake and medical history review' },
-      { id: 3, patientId: 3, name: 'Mike Johnson', time: '2:00 PM', reason: 'Follow-up', notes: 'Check ankle recovery progress' },
+      { id: 1, patientId: 1, name: 'Dr. James Harrington', time: '9:00 AM', reason: 'Regular Checkup', notes: 'Blood pressure monitoring required' },
+      { id: 5, patientId: 17, name: 'Dr. James Harrington', time: '3:00 PM', reason: 'Regular Checkup', notes: 'This the test note' },
+      { id: 2, patientId: 2, name: 'Dr. Olivia Bennett', time: '11:30 AM', reason: 'First Consultation', notes: 'New patient intake and medical history review' },
+      { id: 3, patientId: 3, name: 'Dr. William Hughes', time: '2:00 PM', reason: 'Follow-up', notes: 'Check ankle recovery progress' },
+      { id: 4, patientId: 4, name: 'Dr. Amelia Clarke', time: '3:00 PM', reason: 'Follow-up', notes: 'Check ankle recovery progress' },
     ];
     this.patients = dummyPatients;
     this.appointments = dummyAppointments;

@@ -47,6 +47,7 @@
 <script>
 import { toast } from 'vue3-toastify';
 import {jwtDecode} from 'jwt-decode';
+import dayjs from 'dayjs';
 import {getDoctorList, bookAppointment} from '@/store/api.js';
 
 //  const token = localStorage.getItem("authToken");
@@ -56,7 +57,7 @@ import {getDoctorList, bookAppointment} from '@/store/api.js';
 export default {
   data() {
     return {
-      selectedDoctor: null,
+      selectedDoctor: '',
       description: '',
       date: '',
       time: '',
@@ -78,12 +79,15 @@ export default {
   methods: {
     async fetchDoctors(){
      try {
-        const response = await getDoctorList();
-        this.doctors = Array.isArray(response) ? response : response.data;
+        
+      const response = await getDoctorList();
 
-        if (!this.doctors || this.doctors.length === 0) {
-          toast.warning('No doctors found.');
-        }
+      this.doctors = Array.isArray(response) ? response : response.data;
+      this.doctors = this.doctors.filter(user => user.specialty !== '');
+
+      if (!this.doctors || this.doctors.length === 0) {
+        toast.warning('No doctors found.');
+      }
       } catch (error) {
         console.error('Error loading doctors:', error);
         toast.error('Failed to load doctors.');
@@ -104,11 +108,14 @@ export default {
       }
       return false;
     },
-    resetForm() {
-      this.selectedDoctor = null;
+    resetFormData(){
+      this.selectedDoctor = '';
       this.description = '';
       this.date = '';
       this.time = '';
+    },
+    resetForm() {
+      this.resetFormData();
       toast.info('Form reset.');
     },
     async submitAppointment() {
@@ -126,15 +133,21 @@ export default {
       // book appointment and trigger email
       const token = localStorage.getItem('authToken');
       const decoded = jwtDecode(token);
-      const patientId = decoded?.id || decoded?.userId;
+      const patientId = decoded?.id || decoded?.userId;const pad = n => String(n).padStart(2, '0');
+      const [h, m] = this.time.split(":").map(Number);
+      const startTime = `${pad(h)}:${pad(m)}:00`;
+      const endMinutes = m + 20;
+      const endHour = h + Math.floor(endMinutes / 60);
+      const endMinute = endMinutes % 60;
+      const endTime = `${pad(endHour)}:${pad(endMinute)}:00`;
 
       const payload = {
-          doctorId: this.selectedDoctor,
-          patientId,
-          description: this.description,
-          date: this.date,
-          startTime: this.time,
-          endTime: dayjs(this.time, 'HH:mm').add(20, 'minute').format('HH:mm')
+        doctorId: this.selectedDoctor,
+        patientId,
+        description: this.description,
+        date: this.date, // "YYYY-MM-DD" is fine
+        startTime,
+        endTime
         };
     console.log('Submitting appointment:', payload);
       
@@ -142,10 +155,10 @@ export default {
     // await axios.post('/api/appointments/book', payload);
      const response= await bookAppointment(payload);
      if (response?.message) {
-          toast.success(response.message);
-          this.resetForm();
+          toast.error(response.message);
         } else {
-          toast.info('Appointment booked successfully!');
+          toast.success('Appointment booked successfully!');
+          this.resetFormData();
         }
   } catch (error) {
     console.error('Booking failed:', error);
