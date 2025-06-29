@@ -45,8 +45,9 @@
 </template>
 
 <script>
- import {jwtDecode} from 'jwt-decode';
-import {getDoctorList} from '@/store/api.js';
+import { toast } from 'vue3-toastify';
+import {jwtDecode} from 'jwt-decode';
+import {getDoctorList, bookAppointment} from '@/store/api.js';
 
 //  const token = localStorage.getItem("authToken");
 //  const decodedToken = jwtDecode(token);
@@ -66,40 +67,11 @@ export default {
   computed: {
     filteredDoctors() {
       // If searching by time and date, show only available doctors, others disabled and red
-      if (this.date && this.time) {
-        return this.doctors;
-      }
       return this.doctors;
     }
   },
   mounted() {
     // Dummy doctor data with booked slots for demo
-    this.doctors = [
-      {
-        doctorId: 1,
-        name: 'Dr. Alice Smith',
-        bookedSlots: {
-          '2025-06-28': ['10:00', '12:00'],
-          '2025-06-29': ['11:00', '15:00']
-        }
-      },
-      {
-        doctorId: 2,
-        name: 'Dr. Bob Johnson',
-        bookedSlots: {
-          '2025-06-28': ['11:00', '14:00', '16:00'],
-          '2025-06-29': ['10:00', '13:00', '18:00']
-        }
-      },
-      {
-        doctorId: 3,
-        name: 'Dr. Carol Lee',
-        bookedSlots: {
-          '2025-06-28': ['13:00', '17:00'],
-          '2025-06-29': ['12:00', '14:00']
-        }
-      }
-    ];
     // fetch available doctors
     this.fetchDoctors();
   },
@@ -107,15 +79,14 @@ export default {
     async fetchDoctors(){
      try {
         const response = await getDoctorList();
-
-        // Check if response is wrapped inside a `data` key
         this.doctors = Array.isArray(response) ? response : response.data;
 
         if (!this.doctors || this.doctors.length === 0) {
-          console.warn('Doctors list is empty');
+          toast.warning('No doctors found.');
         }
       } catch (error) {
-        console.error('Failed to load doctors:', error);
+        console.error('Error loading doctors:', error);
+        toast.error('Failed to load doctors.');
       }
     },
     isSlotBooked(slot) {
@@ -138,19 +109,18 @@ export default {
       this.description = '';
       this.date = '';
       this.time = '';
+      toast.info('Form reset.');
     },
     async submitAppointment() {
       if (!this.selectedDoctor && (!this.date || !this.time)) {
-        alert('Please select a doctor or choose a date and time.');
+        toast.warning('Select a doctor or provide date and time.');
         return;
       }
       // Time validation: only allow between 10:00 and 18:00
-      if (this.time) {
-        const [hour, minute] = this.time.split(":").map(Number);
-        if (hour < 10 || hour > 18 || (hour === 18 && minute > 0)) {
-          alert('Appointments can only be booked between 10:00 AM and 6:00 PM.');
-          return;
-        }
+      const [hour, minute] = this.time.split(":").map(Number);
+      if (hour < 10 || hour > 18 || (hour === 18 && minute > 0)) {
+        toast.warning('Book appointments only between 10:00 AM and 6:00 PM.');
+        return;
       }
        try {
       // book appointment and trigger email
@@ -158,25 +128,30 @@ export default {
       const decoded = jwtDecode(token);
       const patientId = decoded?.id || decoded?.userId;
 
-      debugger;
       const payload = {
-        doctorId: this.selectedDoctor,
-        patientId: patientId,
-        description: this.description,
-        date: this.date,
-        time: this.time
-      };
+          doctorId: this.selectedDoctor,
+          patientId,
+          description: this.description,
+          date: this.date,
+          startTime: this.time,
+          endTime: dayjs(this.time, 'HH:mm').add(20, 'minute').format('HH:mm')
+        };
     console.log('Submitting appointment:', payload);
-
+      
     // Now send the payload to your backend API (e.g., using axios)
     // await axios.post('/api/appointments/book', payload);
-
-    alert('Appointment booked!');
+     const response= await bookAppointment(payload);
+     if (response?.message) {
+          toast.success(response.message);
+          this.resetForm();
+        } else {
+          toast.info('Appointment booked successfully!');
+        }
   } catch (error) {
-    console.error('Failed to book appointment:', error);
-    alert('Failed to book appointment.');
-  }
+    console.error('Booking failed:', error);
+        toast.error('Failed to book appointment.');
     }
   }
+}
 };
 </script>

@@ -60,3 +60,6 @@ export const fetchAppointments = async() => {
 export const getDoctorList = async() => {
     return await apiClient.get('/appointment/getalldoctors');
 }
+export const bookAppointment = async(payload) => {
+    return await apiClient.post('/appointment/book',payload);
+}
