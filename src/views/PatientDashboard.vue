@@ -36,7 +36,7 @@
           <p><strong>Date:</strong> {{  selectedAppointment.date }}</p>
           <p><strong>Time:</strong> {{ selectedAppointment.startTime }} - {{ selectedAppointment.endTime }} </p>
           <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
-          <input type="button" value="Cancel Appointment" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer" @click="selectAppointment(null)" />
+          <input type="button" value="Cancel Appointment" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer" @click="download()" />
         </div>
         <div v-else>
           <p>Please select an appointment to see the details.</p>
@@ -49,7 +49,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import {fetchAppointments} from '@/store/api.js'
+import {fetchAppointments, downloadPdf} from '@/store/api.js'
 export default {
   data() {
     return {
@@ -68,8 +68,23 @@ export default {
     },
     selectAppointment(appointment) {
       this.selectedAppointment = appointment;
+    },
+async download() {
+    try {
+      const fileUrl = downloadPdf(); // Already returns a string
+
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.setAttribute('download', 'report.pdf'); // Forces download
+      link.setAttribute('target', '_blank'); // Optional: opens in new tab if not downloadable
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download error:', error);
     }
-  },
+  }
+},
   mounted() {
     this.getAppointments();
   },

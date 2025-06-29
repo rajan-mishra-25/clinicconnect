@@ -63,3 +63,16 @@ export const getDoctorList = async() => {
 export const bookAppointment = async(payload) => {
     return await apiClient.post('/appointment/book',payload);
 }
+export const downloadPdf =  () => {
+   try {
+    //const response = await apiClient.get('/user/28/download');
+
+    // The backend should return the signed S3 URL (302 or in response.data)
+    return 'https://cloudconnect-appointment-s3.s3.us-east-1.amazonaws.com/appointments/28.pdf?X-Amz-Expires=600&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYDWNLS3SKJJBKF7C%2F20250629%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250629T185720Z&X-Amz-SignedHeaders=host&X-Amz-Signature=d266649278c91f65440684deba86b20e17f5e2a81680d6b6fce17a9b95cb179b'
+
+    
+  } catch (err) {
+    console.error('Download failed:', err);
+  }
+};
+
