@@ -36,7 +36,7 @@
           <p><strong>Date:</strong> {{  selectedAppointment.date }}</p>
           <p><strong>Time:</strong> {{ selectedAppointment.startTime }} - {{ selectedAppointment.endTime }} </p>
           <p><strong>Description:</strong> {{ selectedAppointment.description }}</p>
-          <input type="button" value="Cancel Appointment" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer" @click="download()" />
+          <input type="button" value="Download Appointment" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 cursor-pointer" @click="download()" />
         </div>
         <div v-else>
           <p>Please select an appointment to see the details.</p>
@@ -71,7 +71,7 @@ export default {
     },
 async download() {
     try {
-      const fileUrl = downloadPdf(); // Already returns a string
+      const fileUrl = downloadPdf(this.selectedAppointment.appointmentId); // Already returns a string
 
       const link = document.createElement('a');
       link.href = fileUrl;
